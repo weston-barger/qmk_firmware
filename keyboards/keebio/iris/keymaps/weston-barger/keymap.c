@@ -10,7 +10,6 @@
 #define _SPECIAL 4
 #define _COMMAND 5
 
-
 enum custom_keycodes { QWERTY = SAFE_RANGE, EOW, BOW, EOL, BOL, TAB_LEFT, TAB_RIGHT, TERM };
 
 // clang-format off
@@ -76,33 +75,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         switch (keycode) {
             case TAB_RIGHT:
-                SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LALT)SS_DOWN(X_RIGHT)SS_UP(X_RIGHT)SS_UP(X_LALT)SS_UP(X_LGUI));
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_LALT) SS_DOWN(X_RIGHT) SS_UP(X_RIGHT) SS_UP(X_LALT) SS_UP(X_LGUI));
                 return false;
             case TAB_LEFT:
-                SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LALT)SS_DOWN(X_LEFT)SS_UP(X_LEFT)SS_UP(X_LALT)SS_UP(X_LGUI));
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_LALT) SS_DOWN(X_LEFT) SS_UP(X_LEFT) SS_UP(X_LALT) SS_UP(X_LGUI));
                 return false;
             case EOW:
-                SEND_STRING(SS_DOWN(X_LALT)SS_DOWN(X_RIGHT)SS_UP(X_RIGHT)SS_UP(X_LALT));
+                SEND_STRING(SS_DOWN(X_LALT) SS_DOWN(X_RIGHT) SS_UP(X_RIGHT) SS_UP(X_LALT));
                 return false;
             case BOW:
-                SEND_STRING(SS_DOWN(X_LALT)SS_DOWN(X_LEFT)SS_UP(X_LEFT)SS_UP(X_LALT));
+                SEND_STRING(SS_DOWN(X_LALT) SS_DOWN(X_LEFT) SS_UP(X_LEFT) SS_UP(X_LALT));
                 return false;
             case EOL:
                 if (get_mods() & MOD_MASK_SHIFT) {
-                    SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_RIGHT)SS_UP(X_RIGHT)SS_UP(X_LGUI));
-                    return false; 
+                    SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_RIGHT) SS_UP(X_RIGHT) SS_UP(X_LGUI));
+                    return false;
                 }
                 break;
             case BOL:
-                SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LEFT)SS_UP(X_LEFT)SS_UP(X_LGUI));
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_LEFT) SS_UP(X_LEFT) SS_UP(X_LGUI));
                 return false;
             case TERM:
-                SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LSFT)SS_DOWN(X_T)SS_UP(X_T)SS_UP(X_LSFT)SS_UP(X_LGUI));
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_LSFT) SS_DOWN(X_T) SS_UP(X_T) SS_UP(X_LSFT) SS_UP(X_LGUI));
                 return false;
         }
     }
@@ -111,21 +109,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 };
 
 void keyboard_post_init_user(void) {
-  set_single_persistent_default_layer(_DEFAULT);
-  rgb_matrix_disable();
- }
+    set_single_persistent_default_layer(_DEFAULT);
+    rgb_matrix_disable();
+}
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-  if (layer_state_cmp(state, _DEFAULT)){
-      rgb_matrix_disable();
-      return state; 
-  }
-  rgb_matrix_enable();
-  if (layer_state_cmp(state, _VIM)){
-    rgb_matrix_set_color_all(255, 0, 0);
-  } 
-  else if (layer_state_cmp(state, _NORMAL)) {
-    rgb_matrix_set_color_all(0, 255, 0);
-  } 
-  return state;
+    if (layer_state_cmp(state, _DEFAULT)) {
+        rgb_matrix_disable();
+        return state;
+    }
+    rgb_matrix_enable();
+    if (layer_state_cmp(state, _VIM)) {
+        rgb_matrix_set_color_all(255, 0, 0);
+    } else if (layer_state_cmp(state, _NORMAL)) {
+        rgb_matrix_set_color_all(0, 255, 0);
+    }
+    return state;
 }
