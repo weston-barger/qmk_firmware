@@ -11,16 +11,8 @@
 #define _NORMAL_THREE 5
 #define _SPECIAL 6
 
-enum custom_keycodes {
-  QWERTY = SAFE_RANGE,
-  EOW,
-  BOW,
-  EOL,
-  BOL,
-  TAB_LEFT, 
-  TAB_RIGHT,
-  TERM
-};
+enum custom_keycodes { QWERTY = SAFE_RANGE, EOW, BOW, EOL, BOL, TAB_LEFT, TAB_RIGHT, TERM };
+
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -76,9 +68,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-/* 
+/*
  * How do we want to organize mappings?
- * We need a 
+ * We need a
  *  - default layer that has ESC mapped to "vim normal" mode
  *  - a layer that is the base for vim normal mode
  *  - a set of layers that implement the "vim normal" mode commands
@@ -91,29 +83,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         switch (keycode) {
-          case TAB_RIGHT:
-              SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LALT)SS_DOWN(X_RIGHT)SS_UP(X_RIGHT)SS_UP(X_LALT)SS_UP(X_LGUI));
-              return false;
-          case TAB_LEFT:
-              SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LALT)SS_DOWN(X_LEFT)SS_UP(X_LEFT)SS_UP(X_LALT)SS_UP(X_LGUI));
-              return false;
-          case EOW:
-              SEND_STRING(SS_DOWN(X_LALT)SS_DOWN(X_RIGHT)SS_UP(X_RIGHT)SS_UP(X_LALT));
-              return false;
-          case BOW:
-              SEND_STRING(SS_DOWN(X_LALT)SS_DOWN(X_LEFT)SS_UP(X_LEFT)SS_UP(X_LALT));
-              return false;
-          case EOL:
-               SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_RIGHT)SS_UP(X_RIGHT)SS_UP(X_LGUI));
-               return false;
-          case BOL:
-               SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LEFT)SS_UP(X_LEFT)SS_UP(X_LGUI));
-               return false;
-         case TERM:
-              SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LSFT)SS_DOWN(X_T)SS_UP(X_T)SS_UP(X_LSFT)SS_UP(X_LGUI));
-              return false;
-
-               
+            case TAB_RIGHT:
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_LALT) SS_DOWN(X_RIGHT) SS_UP(X_RIGHT) SS_UP(X_LALT) SS_UP(X_LGUI));
+                return false;
+            case TAB_LEFT:
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_LALT) SS_DOWN(X_LEFT) SS_UP(X_LEFT) SS_UP(X_LALT) SS_UP(X_LGUI));
+                return false;
+            case EOW:
+                SEND_STRING(SS_DOWN(X_LALT) SS_DOWN(X_RIGHT) SS_UP(X_RIGHT) SS_UP(X_LALT));
+                return false;
+            case BOW:
+                SEND_STRING(SS_DOWN(X_LALT) SS_DOWN(X_LEFT) SS_UP(X_LEFT) SS_UP(X_LALT));
+                return false;
+            case EOL:
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_RIGHT) SS_UP(X_RIGHT) SS_UP(X_LGUI));
+                return false;
+            case BOL:
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_LEFT) SS_UP(X_LEFT) SS_UP(X_LGUI));
+                return false;
+            case TERM:
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_LSFT) SS_DOWN(X_T) SS_UP(X_T) SS_UP(X_LSFT) SS_UP(X_LGUI));
+                return false;
         }
     }
 
