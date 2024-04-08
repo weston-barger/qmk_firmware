@@ -1,12 +1,4 @@
-/*
- * TODO:
- *  - add vim keys for layers
- *  - visual highlighting
- *  - delete
- */
-
 #include QMK_KEYBOARD_H
-#include "print.h"
 
 #define _QWERTY 0
 #define _INSERT 1
@@ -203,17 +195,13 @@ bool is_vim_oops(uint16_t keycode, keyrecord_t *record) {
 
 bool process_vim_oops(uint16_t keycode, keyrecord_t *record) {
     const uint8_t mod_state = get_mods();
-    printf("oops\n");
-    printf("mods: %d\n", mod_state);
     if (record->event.pressed) {
         switch (keycode) {
             case VIM_U:
                 SEND_STRING(UNDO_SEQ);
                 return false;
             case VIM_R:
-                printf("oops vim_r\n");
                 if (mod_state & MOD_MASK_CTRL) {
-                    printf("oops vim_r w/ mask\n");
                     del_mods(mod_state);
                     SEND_STRING(REDO_SEQ);
                     set_mods(mod_state);
@@ -347,8 +335,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 };
 
 void keyboard_post_init_user(void) {
-    debug_enable = true;
-    debug_matrix = true;
+    // debug_enable = true;
+    // debug_matrix = true;
     set_single_persistent_default_layer(_QWERTY);
     layer_move(_INSERT);
     rgb_matrix_disable();
