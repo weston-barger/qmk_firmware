@@ -7,7 +7,7 @@
 #define _SPECIAL 4
 #define _COMMAND 5
 
-enum custom_keycodes { VIM_E = SAFE_RANGE, VIM_B, VIM_4, VIM_0, VIM_H, VIM_J, VIM_K, VIM_L, VIM_D, VIM_X, VIM_BSPC, VIM_Y, VIM_P, VIM_U, VIM_R, VIM_V, TAB_LEFT, TAB_RIGHT, TERM };
+enum custom_keycodes { VIM_E = SAFE_RANGE, VIM_B, VIM_4, VIM_A, VIM_0, VIM_H, VIM_J, VIM_K, VIM_L, VIM_D, VIM_X, VIM_BSPC, VIM_Y, VIM_P, VIM_U, VIM_R, VIM_V, TAB_LEFT, TAB_RIGHT, TERM };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -31,7 +31,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_NORMAL] = LAYOUT(
      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, VIM_4, XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, VIM_0, XXXXXXX,
      XXXXXXX, XXXXXXX, XXXXXXX, VIM_E, VIM_R, XXXXXXX,                            VIM_Y, VIM_U, TO(_INSERT), XXXXXXX, VIM_P, XXXXXXX,
-     _______, XXXXXXX, XXXXXXX, VIM_D, XXXXXXX, XXXXXXX,                            VIM_H, VIM_J, VIM_K, VIM_L, XXXXXXX, XXXXXXX,
+     _______, VIM_A, XXXXXXX, VIM_D, XXXXXXX, XXXXXXX,                            VIM_H, VIM_J, VIM_K, VIM_L, XXXXXXX, XXXXXXX,
      _______, XXXXXXX, VIM_X, XXXXXXX, VIM_V, VIM_B, TO(_QWERTY),          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
                                     XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX
   ),
@@ -55,7 +55,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_COMMAND] = LAYOUT(
      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                            TAB_LEFT, TAB_RIGHT, XXXXXXX, XXXXXXX, XXXXXXX, KC_DEL,
      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                            KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, XXXXXXX, XXXXXXX,
+     KC_LCTL, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                            KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, XXXXXXX, XXXXXXX,
      KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, QK_BOOT,          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_RSFT,
                                     KC_LGUI, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, KC_LALT
   ),
@@ -113,7 +113,15 @@ bool is_vim_nav(uint16_t keycode, keyrecord_t *record) {
     if (keycode == VIM_4 && get_mods() & MOD_MASK_SHIFT) {
         return true;
     }
+    // Bug: vim_4 is in this range
     return VIM_E <= keycode && keycode <= VIM_L;
+}
+
+bool is_nav_to_insert(uint16_t keycode, keyrecord_t *record) {
+    if (!record->event.pressed) {
+        return false;
+    }
+    return keycode == VIM_A;
 }
 
 bool process_vim_nav(uint16_t keycode, keyrecord_t *record) {
@@ -138,6 +146,10 @@ bool process_vim_nav(uint16_t keycode, keyrecord_t *record) {
             case VIM_L:
                 SEND_STRING(VIM_L_SEQ);
                 return false;
+            case VIM_A:
+                if (delete_mode) {
+                    return false;
+                }
             case VIM_4:
                 if (mod_state & MOD_MASK_SHIFT) {
                     del_mods(mod_state);
@@ -227,7 +239,7 @@ bool process_vim_del(uint16_t keycode, keyrecord_t *record) {
             case VIM_D:
                 if (!delete_mode && mod_state & MOD_MASK_SHIFT) {
                     del_mods(mod_state);
-                    SEND_STRING(ADD_SHIFT(VIM_0_SEQ));
+                    SEND_STRING(ADD_SHIFT(VIM_4_SEQ));
                     SEND_KEY(X_DEL);
                     set_mods(mod_state);
                 } else if (delete_mode) {
@@ -269,12 +281,17 @@ bool process_delete_mode_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_normal_mode_user(uint16_t keycode, keyrecord_t *record) {
+   bool ret;
     if (delete_mode) {
         return process_delete_mode_user(keycode, record);
     } else if (is_vim_delete(keycode, record)) {
         return process_vim_del(keycode, record);
     } else if (is_vim_nav(keycode, record)) {
-        return process_vim_nav(keycode, record);
+         ret= process_vim_nav(keycode, record);
+         if (!ret && is_nav_to_insert(keycode, record)){
+            layer_move(_INSERT);
+         }
+         return ret;
     } else if (is_vim_edit(keycode, record)) {
         return process_vim_edit(keycode, record);
     } else if (is_vim_oops(keycode, record)) {
@@ -297,14 +314,15 @@ bool process_visual_mode_user(uint16_t keycode, keyrecord_t *record) {
     if (is_vim_delete(keycode, record)) {
         SEND_KEY(X_DEL);
         ret = false;
+        SEND_STRING(WIGGLE_SEQ);
     } else if (is_vim_edit(keycode, record)) {
         SEND_STRING(COPY_SEQ);
         ret = process_vim_edit(keycode, record);
+        SEND_STRING(WIGGLE_SEQ);
     } else if (is_visual_toggle(keycode, record)) {
         ret = false;
     }
     if (!ret) {
-        SEND_STRING(WIGGLE_SEQ);
         layer_move(_NORMAL);
     }
     return ret;
