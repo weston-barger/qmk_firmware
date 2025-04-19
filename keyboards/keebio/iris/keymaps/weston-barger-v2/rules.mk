@@ -1,0 +1,8 @@
+RGB_MATRIX_ENABLE = yes
+RGB_MATRIX_DRIVER = ws2812
+CONSOLE_ENABLE = yes
+KEY_LOCK_ENABLE = yes
+SERIAL_DRIVER = vendor
+
+SRC += state_machine.c
+SRC += vim.c

@@ -1,26 +1,24 @@
 {
-    "keyboard_name": "Iris Rev. 3",
+    "keyboard_name": "Iris Rev. 1",
     "usb": {
-        "pid": "0x3256",
-        "device_version": "3.0.0"
+        "pid": "0x1256",
+        "device_version": "1.0.0"
     },
     "matrix_pins": {
-        "cols": ["F1", "F4", "F5", "F6", "D4", "B4"],
-        "rows": ["D2", "D3", "D5", "D7", "D6"]
+        "cols": ["F6", "F7", "B1", "B3", "B2", "B6"],
+        "rows": ["D7", "E6", "B4", "B5", "D4"]
     },
     "diode_direction": "COL2ROW",
-    "encoder": {
-        "rotary": [
-            {"pin_a": "B5", "pin_b": "B7"}
-        ]
-    },
     "backlight": {
-        "pin": "B6",
+        "driver": "timer",
+        "pin": "D2",
         "levels": 5
+    },
+    "split": {
+        "soft_serial_pin": "D0"
     },
     "rgblight": {
         "led_count": 12,
-        "split_count": [6, 6],
         "animations": {
             "breathing": true,
             "rainbow_mood": true,
@@ -35,42 +33,10 @@
         }
     },
     "ws2812": {
-        "pin": "F7"
-    },
-    "qmk_lufa_bootloader": {
-        "esc_input": "D2",
-        "esc_output": "F1",
-        "led": "B0",
-        "speaker": "C6"
-    },
-    "split": {
-        "enabled": true,
-        "handedness": {
-            "pin": "F0"
-        },
-        "serial": {
-            "pin": "D0"
-        }
+        "pin": "D3"
     },
     "processor": "atmega32u4",
-    "bootloader": "qmk-dfu",
-    "features": {
-        "bootmagic": false,
-        "mousekey": false,
-        "extrakey": true,
-        "backlight": true,
-        "rgblight": true,
-        "encoder": true
-    },
-    "qmk": {
-        "locking": {
-            "enabled": true,
-            "resync": true
-        }
-    },
-    "build": {
-        "lto": true
-    },
+    "bootloader": "caterina",
     "layouts": {
         "LAYOUT": {
             "layout": [
